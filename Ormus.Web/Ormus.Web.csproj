@@ -136,6 +136,7 @@
     <Compile Include="AutofacModules\AutofacModule.cs" />
     <Compile Include="AutofacModules\AutoMapperModule.cs" />
     <Compile Include="Controllers\Web\BaseController.cs" />
+    <Compile Include="Controllers\Web\ClientsController.cs" />
     <Compile Include="Controllers\Web\HomeController.cs" />
     <Compile Include="Controllers\Web\UsersController.cs" />
     <Compile Include="Controllers\Web\UsersRolesController.cs" />
@@ -249,6 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\Api\" />
+    <Folder Include="Views\Clients\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -267,6 +269,10 @@
     <ProjectReference Include="..\Ormus.Core\Ormus.Core.csproj">
       <Project>{e4c2ffb2-3686-4e34-b342-5e96dba9eec2}</Project>
       <Name>Ormus.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ormus.Dapper\Ormus.Dapper.csproj">
+      <Project>{e2e206d7-6fc0-4b6b-84ec-0320314f899a}</Project>
+      <Name>Ormus.Dapper</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -6,7 +6,6 @@ namespace Ormus.Core.Domain
     {
         public string Code { get; set; }
         public string Description { get; set; }
-        public DateTime CreatedDate { get; set; }
         public bool Ghost { get; set; }
     }
 }

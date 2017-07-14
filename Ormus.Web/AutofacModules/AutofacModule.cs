@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Ormus.AdoNet.Repositories;
 using Ormus.Core.Repositories;
+using Ormus.Dapper.Repositories;
 
 namespace Ormus.Web.AutofacModules
 {
@@ -21,16 +22,15 @@ namespace Ormus.Web.AutofacModules
                 .As<IUserRepository>().InstancePerRequest();
 
 
+            // ADO.NET
             builder.Register(c => new AdoUserRoleRepository(_connStr))
                 .As<IUserRoleRepository>().InstancePerRequest();
 
+            // Dapper
+            //builder.Register(c => new DapperUserRoleRepository(_connStr))
+            //    .As<IUserRoleRepository>().InstancePerRequest();
+
             #endregion
-
-            //#region Services
-
-            //builder.RegisterType<LogService>().As<IAppLogService>().InstancePerRequest();
-
-            //#endregion
 
             base.Load(builder);
         }

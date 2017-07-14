@@ -23,3 +23,17 @@ Ghost bit not null default 0
 );
 
 select * from Users;
+
+create table Clients(
+Id integer identity(1,1) primary key,
+FirstName varchar(32) not null,
+LastName varchar(64) not null,
+BirthDate datetime2(2) not null,
+Email varchar(64),
+Phone varchar(16),
+CreatedDate datetime2(2) not null default getdate(),
+UpdatedDate datetime2(2),
+Ghost bit not null default 0
+);
+
+select * from Clients;
