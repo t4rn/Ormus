@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Ormus.Web.Controllers
+namespace Ormus.Web.Controllers.Web
 {
     public class HomeController : Controller
     {
