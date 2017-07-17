@@ -6,4 +6,4 @@ Techniques:
 * Dapper
 * Entity Framework (in progress...)
 * Fluent NHiberante (in progress...)
-* .
+* ...
