@@ -1,19 +1,16 @@
-﻿using Ormus.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dapper;
 using Ormus.Core.Domain;
+using Ormus.Core.Repositories;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using Dapper;
+using System.Linq;
 
 namespace Ormus.Dapper.Repositories
 {
     public class DapperUserRoleRepository : BaseRepository, IUserRoleRepository
     {
         public DapperUserRoleRepository(string connectionString) : base(connectionString)
-        {}
+        { }
 
         public void Add(UserRole userRole)
         {
@@ -22,23 +19,18 @@ namespace Ormus.Dapper.Repositories
 
                         SELECT SCOPE_IDENTITY();";
 
+            CommandDefinition commandDefinition = new CommandDefinition(query,
+                new
+                {
+                    Code = userRole.Code,
+                    Description = userRole.Description,
+                    CreatedDate = userRole.CreatedDate,
+                    Ghost = userRole.Ghost
+                });
+
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Code", userRole.Code);
-                    cmd.Parameters.AddWithValue("@Description", userRole.Description);
-                    cmd.Parameters.AddWithValue("@CreatedDate", userRole.CreatedDate);
-                    cmd.Parameters.AddWithValue("@Ghost", userRole.Ghost);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteScalar();
-                    if (o != null && o != DBNull.Value)
-                    {
-                        userRole.Id = Convert.ToInt32(o);
-                    }
-                }
+                userRole.Id = conn.ExecuteScalar<int>(commandDefinition);
             }
         }
 
@@ -50,18 +42,7 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteNonQuery();
-                    if (o != null && o != DBNull.Value)
-                    {
-                        rowsAffected = Convert.ToInt32(o);
-                    }
-                }
+                rowsAffected = conn.Execute(query, new { Id = id });
             }
 
             return rowsAffected;
@@ -77,7 +58,7 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                userRole = conn.Query<UserRole>(query, new { id = id }).FirstOrDefault();
+                userRole = conn.QueryFirstOrDefault<UserRole>(query, new { id = id });
             }
 
             return userRole;
@@ -92,7 +73,7 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                userRoles = conn.Query<UserRole>(query).AsList();
+                userRoles = conn.Query<UserRole>(query);
             }
 
             return userRoles;
@@ -105,42 +86,13 @@ namespace Ormus.Dapper.Repositories
                                 SET Code = @Code, Description = @Description, Ghost = @Ghost, CreatedDate = @CreatedDate
                                 WHERE Id = @Id;";
 
+
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Code", userRole.Code);
-                    cmd.Parameters.AddWithValue("@Description", userRole.Description);
-                    cmd.Parameters.AddWithValue("@Ghost", userRole.Ghost);
-                    cmd.Parameters.AddWithValue("@Id", userRole.Id);
-                    cmd.Parameters.AddWithValue("@CreatedDate", userRole.CreatedDate);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteNonQuery();
-                    if (o != null && o != DBNull.Value)
-                    {
-                        rowsAffected = Convert.ToInt32(o);
-                    }
-                }
+                rowsAffected = conn.Execute(query, userRole);
             }
 
             return rowsAffected;
-        }
-
-        /// <summary>
-        /// Extracts UserRole from DataReader
-        /// </summary>
-        private UserRole ExtractUserRoleFromDataReader(SqlDataReader dr)
-        {
-            UserRole userRole = new UserRole();
-            userRole.Id = Convert.ToInt32(dr["Id"]);
-            userRole.Code = dr["Code"].ToString();
-            userRole.Description = dr["Description"].ToString();
-            userRole.CreatedDate = Convert.ToDateTime(dr["CreatedDate"]);
-            userRole.Ghost = Convert.ToBoolean(dr["Ghost"]);
-
-            return userRole;
         }
     }
 }

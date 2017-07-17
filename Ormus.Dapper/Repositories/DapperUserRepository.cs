@@ -1,17 +1,17 @@
-﻿using Ormus.Core.Repositories;
+﻿using Dapper;
+using Ormus.Core.Domain;
+using Ormus.Core.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ormus.Core.Domain;
 using System.Data.SqlClient;
+using System.Linq;
+
 namespace Ormus.Dapper.Repositories
 {
     public class DapperUserRepository : BaseRepository, IUserRepository
     {
         public DapperUserRepository(string connectionString) : base(connectionString)
-        {}
+        { }
 
         public void Add(User user)
         {
@@ -24,26 +24,19 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
-                    cmd.Parameters.AddWithValue("@Login", user.Login);
-                    cmd.Parameters.AddWithValue("@Password", user.Password);
-                    cmd.Parameters.AddWithValue("@FirstName", ParameterForCmd(user.FirstName));
-                    cmd.Parameters.AddWithValue("@LastName", ParameterForCmd(user.LastName));
-                    cmd.Parameters.AddWithValue("@Email", user.Email);
-                    cmd.Parameters.AddWithValue("@CreatedDate", user.CreatedDate);
-                    cmd.Parameters.AddWithValue("@UpdatedDate", ParameterForCmd(user.UpdatedDate));
-                    cmd.Parameters.AddWithValue("@Ghost", user.Ghost);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteScalar();
-                    if (o != null && o != DBNull.Value)
+                user.Id = conn.ExecuteScalar<int>(query,
+                    new
                     {
-                        user.Id = Convert.ToInt32(o);
-                    }
-                }
+                        RoleId = user.Role.Id,
+                        Login = user.Login,
+                        Password = user.Password,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        CreatedDate = user.CreatedDate,
+                        UpdatedDate = user.UpdatedDate,
+                        Ghost = user.Ghost
+                    });
             }
         }
 
@@ -55,18 +48,7 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteNonQuery();
-                    if (o != null && o != DBNull.Value)
-                    {
-                        rowsAffected = Convert.ToInt32(o);
-                    }
-                }
+                rowsAffected = conn.Execute(query, new { Id = id });
             }
 
             return rowsAffected;
@@ -77,24 +59,19 @@ namespace Ormus.Dapper.Repositories
             User user = null;
             string query = @"SELECT u.Id, u.RoleId, u.Login, u.Password, u.FirstName, 
                                     u.LastName, u.Email, u.CreatedDate, u.UpdatedDate, u.Ghost,
-                                    ur.Id ur_id, ur.Code ur_code, ur.Description ur_description, ur.CreatedDate ur_createdDate, ur.Ghost ur_ghost
+                                    ur.Id ur_id, ur.Code, ur.Description, ur.CreatedDate, ur.Ghost
                             FROM Users u
                                 JOIN UsersRoles ur ON ur.Id = u.RoleId
                                 WHERE u.Id = @id;";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
-
-                    cmd.Connection.Open();
-                    SqlDataReader dr = cmd.ExecuteReader();
-                    while (dr.Read())
-                    {
-                        user = ExtractUserFromDataReader(dr);
-                    }
-                }
+                user = conn.Query<User, UserRole, User>(
+                    sql: query,
+                    map: (u, role) => { u.Role = role; return u; },
+                    param: new { Id = id },
+                    splitOn: "ur_id")
+                    .FirstOrDefault();
             }
 
             return user;
@@ -102,25 +79,16 @@ namespace Ormus.Dapper.Repositories
 
         public IEnumerable<User> GetAll()
         {
-            List<User> users = new List<User>();
+            IEnumerable<User> users;
             string query = @"SELECT u.Id, u.RoleId, u.Login, u.Password, u.FirstName, 
                                     u.LastName, u.Email, u.CreatedDate, u.UpdatedDate, u.Ghost,
-                                    ur.Id ur_id, ur.Code ur_code, ur.Description ur_description, ur.CreatedDate ur_createdDate, ur.Ghost ur_ghost
+                                    ur.Id, ur.Code, ur.Description, ur.CreatedDate, ur.Ghost
                             FROM Users u
                                 JOIN UsersRoles ur ON ur.Id = u.RoleId;";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Connection.Open();
-                    SqlDataReader dr = cmd.ExecuteReader();
-                    while (dr.Read())
-                    {
-                        User u = ExtractUserFromDataReader(dr);
-                        users.Add(u);
-                    }
-                }
+                users = conn.Query<User, UserRole, User>(query, map: (user, role) => { user.Role = role; return user; });
             }
 
             return users;
@@ -137,58 +105,22 @@ namespace Ormus.Dapper.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                rowsAffected = conn.Execute(query, new
                 {
-                    cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
-                    cmd.Parameters.AddWithValue("@Login", user.Login);
-                    cmd.Parameters.AddWithValue("@Password", user.Password);
-                    cmd.Parameters.AddWithValue("@FirstName", ParameterForCmd(user.FirstName));
-                    cmd.Parameters.AddWithValue("@LastName", ParameterForCmd(user.LastName));
-                    cmd.Parameters.AddWithValue("@Email", user.Email);
-                    cmd.Parameters.AddWithValue("@CreatedDate", user.CreatedDate);
-                    cmd.Parameters.AddWithValue("@UpdatedDate", user.UpdatedDate);
-                    cmd.Parameters.AddWithValue("@Ghost", user.Ghost);
-
-                    cmd.Parameters.AddWithValue("@Id", user.Id);
-
-                    cmd.Connection.Open();
-
-                    object o = cmd.ExecuteNonQuery();
-                    if (o != null && o != DBNull.Value)
-                    {
-                        rowsAffected = Convert.ToInt32(o);
-                    }
-                }
+                    RoleId = user.Role.Id,
+                    Login = user.Login,
+                    Password = user.Password,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    CreatedDate = user.CreatedDate,
+                    UpdatedDate = user.UpdatedDate,
+                    Ghost = user.Ghost,
+                    Id = user.Id
+                });
             }
 
             return rowsAffected;
-        }
-
-        /// <summary>
-        /// Extracts User from DataReader
-        /// </summary>
-        private User ExtractUserFromDataReader(SqlDataReader dr)
-        {
-            User user = new User();
-            user.Id = Convert.ToInt32(dr["Id"]);
-            user.Login = dr["Login"].ToString();
-            user.Password = dr["Password"].ToString();
-            user.FirstName = dr["FirstName"].ToString();
-            user.LastName = dr["LastName"].ToString();
-            user.Email = dr["Email"].ToString();
-            user.CreatedDate = Convert.ToDateTime(dr["CreatedDate"]);
-            user.UpdatedDate = dr["UpdatedDate"] != DBNull.Value ? Convert.ToDateTime(dr["UpdatedDate"]) : (DateTime?)null;
-            user.Ghost = Convert.ToBoolean(dr["Ghost"]);
-            user.Role = new UserRole()
-            {
-                Id = Convert.ToInt32(dr["ur_id"]),
-                Code = dr["ur_code"].ToString(),
-                Description = dr["ur_description"].ToString(),
-                CreatedDate = Convert.ToDateTime(dr["ur_createdDate"]),
-                Ghost = Convert.ToBoolean(dr["ur_ghost"])
-            };
-
-            return user;
         }
     }
 }

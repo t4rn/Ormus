@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Ormus.AdoNet.Repositories;
 using Ormus.Core.Repositories;
 using Ormus.Dapper.Repositories;
@@ -16,23 +17,29 @@ namespace Ormus.Web.AutofacModules
 
         protected override void Load(ContainerBuilder builder)
         {
-            #region Repositories
+            //AdoNetRepositories(builder);
+            DapperRepositories(builder);
 
+            base.Load(builder);
+        }
+
+        private void AdoNetRepositories(ContainerBuilder builder)
+        {
             builder.Register(c => new AdoUserRepository(_connStr))
                 .As<IUserRepository>().InstancePerRequest();
 
 
-            // ADO.NET
             builder.Register(c => new AdoUserRoleRepository(_connStr))
                 .As<IUserRoleRepository>().InstancePerRequest();
+        }
 
-            // Dapper
-            //builder.Register(c => new DapperUserRoleRepository(_connStr))
-            //    .As<IUserRoleRepository>().InstancePerRequest();
+        private void DapperRepositories(ContainerBuilder builder)
+        {
+            builder.Register(c => new DapperUserRepository(_connStr))
+                .As<IUserRepository>().InstancePerRequest();
 
-            #endregion
-
-            base.Load(builder);
+            builder.Register(c => new DapperUserRoleRepository(_connStr))
+                .As<IUserRoleRepository>().InstancePerRequest();
         }
     }
 }
