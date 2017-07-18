@@ -3,12 +3,18 @@ using Autofac;
 using Ormus.AdoNet.Repositories;
 using Ormus.Core.Repositories;
 using Ormus.Dapper.Repositories;
+using Ormus.EntityFramework.Repositories;
 
 namespace Ormus.Web.AutofacModules
 {
     public class AutofacModule : Module
     {
         private readonly string _connStr;
+
+        private enum OrmType
+        {
+            Ado, Dapper, EF
+        }
 
         public AutofacModule(string connStr)
         {
@@ -17,8 +23,22 @@ namespace Ormus.Web.AutofacModules
 
         protected override void Load(ContainerBuilder builder)
         {
-            //AdoNetRepositories(builder);
-            DapperRepositories(builder);
+            OrmType ormType = OrmType.EF;
+
+            switch (ormType)
+            {
+                case OrmType.Ado:
+                    AdoNetRepositories(builder);
+                    break;
+                case OrmType.Dapper:
+                    DapperRepositories(builder);
+                    break;
+                case OrmType.EF:
+                    EntityFrameworkRepositories(builder);
+                    break;
+                default:
+                    break;
+            }
 
             base.Load(builder);
         }
@@ -39,6 +59,15 @@ namespace Ormus.Web.AutofacModules
                 .As<IUserRepository>().InstancePerRequest();
 
             builder.Register(c => new DapperUserRoleRepository(_connStr))
+                .As<IUserRoleRepository>().InstancePerRequest();
+        }
+
+        private void EntityFrameworkRepositories(ContainerBuilder builder)
+        {
+            builder.Register(x => new EFUserRepository(new OrmusContext(_connStr)))
+                .As<IUserRepository>().InstancePerRequest();
+
+            builder.Register(x => new EFUserRoleRepository(new OrmusContext(_connStr)))
                 .As<IUserRoleRepository>().InstancePerRequest();
         }
     }

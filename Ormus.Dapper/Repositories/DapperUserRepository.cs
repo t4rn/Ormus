@@ -27,7 +27,7 @@ namespace Ormus.Dapper.Repositories
                 user.Id = conn.ExecuteScalar<int>(query,
                     new
                     {
-                        RoleId = user.Role.Id,
+                        RoleId = user.RoleId,
                         Login = user.Login,
                         Password = user.Password,
                         FirstName = user.FirstName,
@@ -107,7 +107,7 @@ namespace Ormus.Dapper.Repositories
             {
                 rowsAffected = conn.Execute(query, new
                 {
-                    RoleId = user.Role.Id,
+                    RoleId = user.RoleId,
                     Login = user.Login,
                     Password = user.Password,
                     FirstName = user.FirstName,

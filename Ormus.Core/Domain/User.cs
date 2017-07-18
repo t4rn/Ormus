@@ -14,6 +14,8 @@ namespace Ormus.Core.Domain
 
         public string Email { get; set; }
 
+        public int RoleId { get; set; }
+
         public UserRole Role { get; set; }
 
         public DateTime? UpdatedDate { get; set; }

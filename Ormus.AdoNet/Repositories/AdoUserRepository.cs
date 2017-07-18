@@ -24,7 +24,7 @@ namespace Ormus.AdoNet.Repositories
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
+                    cmd.Parameters.AddWithValue("@RoleId", user.RoleId);
                     cmd.Parameters.AddWithValue("@Login", user.Login);
                     cmd.Parameters.AddWithValue("@Password", user.Password);
                     cmd.Parameters.AddWithValue("@FirstName", ParameterForCmd(user.FirstName));
@@ -137,7 +137,7 @@ namespace Ormus.AdoNet.Repositories
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
+                    cmd.Parameters.AddWithValue("@RoleId", user.RoleId);
                     cmd.Parameters.AddWithValue("@Login", user.Login);
                     cmd.Parameters.AddWithValue("@Password", user.Password);
                     cmd.Parameters.AddWithValue("@FirstName", ParameterForCmd(user.FirstName));

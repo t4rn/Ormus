@@ -36,6 +36,7 @@ namespace Ormus.Web.Models
 
         public bool Ghost { get; set; }
 
+        [Display(Name = " User Role")]
         public IEnumerable<SelectListItem> UserRolesCollection { get; set; }
     }
 }
