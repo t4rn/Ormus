@@ -26,7 +26,7 @@ namespace Ormus.Web.Models
         [StringLength(64, MinimumLength = 5)]
         public string Email { get; set; }
 
-        public UserRoleModel Role { get; set; }
+        public string UserRole { get; set; }
 
         public int RoleId { get; set; }
 

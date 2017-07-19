@@ -4,6 +4,7 @@ using Ormus.AdoNet.Repositories;
 using Ormus.Core.Repositories;
 using Ormus.Dapper.Repositories;
 using Ormus.EntityFramework.Repositories;
+using Ormus.Hibernate.Repositories;
 
 namespace Ormus.Web.AutofacModules
 {
@@ -13,7 +14,7 @@ namespace Ormus.Web.AutofacModules
 
         private enum OrmType
         {
-            Ado, Dapper, EF
+            Ado, Dapper, EF, Hibernate
         }
 
         public AutofacModule(string connStr)
@@ -35,6 +36,9 @@ namespace Ormus.Web.AutofacModules
                     break;
                 case OrmType.EF:
                     EntityFrameworkRepositories(builder);
+                    break;
+                case OrmType.Hibernate:
+                    HiberanteRepositories(builder);
                     break;
                 default:
                     break;
@@ -68,6 +72,14 @@ namespace Ormus.Web.AutofacModules
                 .As<IUserRepository>().InstancePerRequest();
 
             builder.Register(x => new EFUserRoleRepository(new OrmusContext(_connStr)))
+                .As<IUserRoleRepository>().InstancePerRequest();
+        }
+        private void HiberanteRepositories(ContainerBuilder builder)
+        {
+            builder.Register(c => new HibernateUserRepository(_connStr))
+                .As<IUserRepository>().InstancePerRequest();
+
+            builder.Register(c => new HibernateUserRoleRepository(_connStr))
                 .As<IUserRoleRepository>().InstancePerRequest();
         }
     }

@@ -16,7 +16,7 @@
     <RootNamespace>Ormus.Web</RootNamespace>
     <AssemblyName>Ormus.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -285,6 +285,10 @@
     <ProjectReference Include="..\Ormus.EntityFramework\Ormus.EntityFramework.csproj">
       <Project>{3132dc35-2759-42c3-994d-4b3796967fdb}</Project>
       <Name>Ormus.EntityFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ormus.Hibernate\Ormus.Hibernate.csproj">
+      <Project>{2d0e2c57-ec15-4ad1-8fb0-dbf5fb5f9afb}</Project>
+      <Name>Ormus.Hibernate</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -18,8 +18,12 @@ namespace Ormus.Web.AutofacModules
                 cfg.CreateMap<UserRole, UserRoleModel>().ReverseMap();
 
                 cfg.CreateMap<User, UserModel>()
-                .ReverseMap()
-                .ForMember(x => x.Password, opt => opt.ResolveUsing(y => Md5.CreateMd5(y.Password)));
+                    .ForMember(um => um.UserRole, opt => opt.ResolveUsing(u => u.Role.Code))
+                    .ForMember(um => um.RoleId, opt => opt.ResolveUsing(u => u.Role.Id))
+                    .ReverseMap()
+                    .ForMember(u => u.Password, opt => opt.ResolveUsing(um => Md5.CreateMd5(um.Password)))
+                    .ForMember(u => u.Role, opt => opt.UseValue<UserModel>(null))//opt.ResolveUsing(um => new UserRole() { Id = um.RoleId }))
+                    ;
 
                 foreach (var profile in context.Resolve<IEnumerable<Profile>>())
                 {
@@ -29,8 +33,8 @@ namespace Ormus.Web.AutofacModules
             })).AsSelf().SingleInstance();
 
             builder.Register(c => c.Resolve<MapperConfiguration>().CreateMapper(c.Resolve))
-                .As<IMapper>()
-                .InstancePerLifetimeScope();
+                    .As<IMapper>()
+                    .InstancePerLifetimeScope();
         }
     }
 }

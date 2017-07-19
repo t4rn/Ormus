@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ormus.Dapper", "Ormus.Dappe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ormus.EntityFramework", "Ormus.EntityFramework\Ormus.EntityFramework.csproj", "{3132DC35-2759-42C3-994D-4B3796967FDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ormus.Hibernate", "Ormus.Hibernate\Ormus.Hibernate.csproj", "{2D0E2C57-EC15-4AD1-8FB0-DBF5FB5F9AFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{3132DC35-2759-42C3-994D-4B3796967FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3132DC35-2759-42C3-994D-4B3796967FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3132DC35-2759-42C3-994D-4B3796967FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D0E2C57-EC15-4AD1-8FB0-DBF5FB5F9AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D0E2C57-EC15-4AD1-8FB0-DBF5FB5F9AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D0E2C57-EC15-4AD1-8FB0-DBF5FB5F9AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D0E2C57-EC15-4AD1-8FB0-DBF5FB5F9AFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
