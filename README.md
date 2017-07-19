@@ -5,5 +5,5 @@ Techniques:
 * ADO.NET
 * Dapper
 * Entity Framework
-* Fluent NHiberante (in progress...)
+* Fluent NHiberante
 * ...
