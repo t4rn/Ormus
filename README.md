@@ -1,6 +1,8 @@
 # Ormus
 CRUD operations in ASP.NET MVC application using different ORMs.
 
+ORM changing in ```AutofacModule.cs``` file.
+
 Techniques:
 * ADO.NET
 * Dapper
