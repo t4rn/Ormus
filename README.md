@@ -7,3 +7,5 @@ Techniques:
 * Entity Framework
 * Fluent NHiberante
 * ...
+
+TODO: many to many relations and nested objects.

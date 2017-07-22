@@ -18,7 +18,6 @@ namespace Ormus.Web.Controllers.Web
             return View(viewName: "Error", model: ex.ToString());
         }
 
-        // GET: Base
         protected ActionResult Error(string error)
         {
             return View(viewName:"Error", model: error);
